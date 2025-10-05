@@ -1,4 +1,0 @@
-moviepy
-imageio[ffmpeg]
-pillow
-opencv-python
