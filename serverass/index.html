@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Login</title>
+		<link rel="stylesheet" href="./css/styles.css" />
+	</head>
+	<body>
+		<div class="centered-div">
+			<div class="side-boxes">
+				<div class="box login-box">
+					<form class="login-form" autocomplete="off">
+						<div class="login-header">
+							<h2>Login</h2>
+							<p class="subtitle">Sign in to your account below</p>
+						</div>
+						<div class="login-fields">
+							<label for="email">Email</label>
+							<input
+								type="email"
+								id="email"
+								name="email"
+								required
+								autocomplete="username"
+							/>
+							<label for="password">Password</label>
+							<input
+								type="password"
+								id="password"
+								name="password"
+								required
+								autocomplete="current-password"
+							/>
+						</div>
+						<div class="login-options">
+							<a href="#" class="forgot-password">Forgot password?</a>
+							<div class="remember-me">
+								<label class="switch">
+									<input type="checkbox" id="remember" name="remember" />
+									<span class="slider"></span>
+								</label>
+								<span>Remember me</span>
+							</div>
+						</div>
+						<div class="login-action">
+							<button type="submit" class="login-btn">Login</button>
+						</div>
+						<div class="or-divider">
+							<span>or</span>
+						</div>
+						<div class="google-login">
+							<button type="button" class="google-btn">
+								<img src="./imgs/google.png" alt="Google" class="google-icon" />
+								Continue with Google
+							</button>
+						</div>
+						<div class="signup-section">
+							<span>Do you have an account?</span>
+							<button type="button" class="signup-btn">Signup</button>
+						</div>
+					</form>
+				</div>
+				<div class="box info-box">
+					<div class="info-content">
+						<h2 class="info-title">Welcome back to Adv Web</h2>
+						<div class="info-image-wrapper">
+							<img
+								src="./imgs/Computer login-amico.png"
+								alt="Welcome image"
+								class="info-image"
+							/>
+						</div>
+						<p class="info-subtitle">We're glad to see you again!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
