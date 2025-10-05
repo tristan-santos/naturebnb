@@ -1,3 +1,11 @@
+$primary-clr: #39955b;
+$background-clr: #fff;
+$font: Montserrat, sans-serif;
+
+* {
+	font-family: $font;
+}
+
 @mixin buttonDefaults($bgColor, $textColor) {
 	background-color: $bgColor;
 	color: $textColor;
@@ -10,5 +18,60 @@
 
 	&:hover {
 		background-color: darken($bgColor, 10%);
+	}
+}
+
+.navbar {
+	width: 100%;
+	padding: 1.2rem 4rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: #0b2e22;
+	color: #fff;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+
+	&__logo {
+		display: flex;
+		align-items: center;
+		gap: 0.8rem;
+
+		img {
+			width: 40px;
+			height: 40px;
+		}
+
+		h1 {
+			font-size: 1.5rem;
+			font-weight: 700;
+		}
+	}
+
+	&__links {
+		display: flex;
+		align-items: center;
+		gap: 2rem;
+		list-style: none;
+
+		a {
+			text-decoration: none;
+			color: #ffffff;
+			font-weight: 500;
+			transition: 0.3s;
+
+			&:hover {
+				color: #8ee4af;
+			}
+		}
+
+		.btn {
+			background-color: #146b47;
+			padding: 0.5rem 1.2rem;
+			border-radius: 8px;
+
+			&:hover {
+				background-color: #1d8058;
+			}
+		}
 	}
 }
