@@ -1,14 +1,16 @@
-import "./sass/App.scss"
-import logo from "../assets/logoPlain.png"
 import { Link } from "react-router-dom"
-import "./sass/App.scss"
+
+import logo from "../../assets/logoNobgWhite.png"
+import "../sass/App.scss"
 
 function navbar() {
 	return (
 		<nav className="navbar">
 			<div className="navbar__logo">
 				<img src={logo} alt="NatureBnB Logo" />
-				<h1>NatureBnB</h1>
+				<Link to="/" className="textLogo">
+					NatureBnB
+				</Link>
 			</div>
 
 			<ul className="navbar__links">
@@ -16,15 +18,10 @@ function navbar() {
 					<Link to="/">Home</Link>
 				</li>
 				<li>
-					<Link to="/about">About</Link>
+					<Link to="/becomeHost">Become a Host</Link>
 				</li>
 				<li>
 					<Link to="/login" className="btn">
-						Login
-					</Link>
-				</li>
-				<li>
-					<Link to="/signup" className="btn">
 						Login
 					</Link>
 				</li>

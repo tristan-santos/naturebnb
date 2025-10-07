@@ -1,0 +1,83 @@
+@use "App";
+
+$brd-radius: 25px;
+
+.search-bar {
+	padding-top: 25px;
+	display: flex;
+	width: 10%;
+	height: 6.5rem;
+
+	& .searchBox {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0;
+		border: 3.5px solid App.$primary-clr;
+		border-radius: $brd-radius;
+
+		.inputBox {
+			display: flex;
+			flex-direction: column;
+			border-radius: $brd-radius;
+
+			input {
+				width: 230px;
+				height: 75px;
+				border: none;
+				outline: none;
+				padding: 0 20px;
+				font-size: 16px;
+				border-radius: $brd-radius;
+				caret-color: transparent;
+
+				&::placeholder {
+					position: absolute;
+					font-family: App.$font;
+					color: rgb(106, 106, 106);
+					font-weight: 400;
+					font-size: 0.9rem;
+				}
+				&:focus {
+					outline: none;
+					transition: all 1s ease;
+					background-color: rgb(233, 233, 233);
+				}
+			}
+
+			label {
+				position: absolute;
+				margin: -14px 12px;
+				padding: 0 5px;
+				background-color: white;
+				color: App.$primary-clr;
+				margin-right: 10px;
+				font-family: App.$font;
+				font-weight: 600;
+				font-size: 0.9rem;
+			}
+			&:first-child input {
+				caret-color: App.$primary-clr;
+			}
+			&:last-child {
+				margin-right: 25px;
+
+				.iconBox {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					width: 40px;
+					aspect-ratio: 1;
+					background-color: App.$primary-clr;
+					border-radius: 50%;
+
+					img {
+						width: 20px;
+						filter: invert(0);
+						aspect-ratio: 1;
+					}
+				}
+			}
+		}
+	}
+}
