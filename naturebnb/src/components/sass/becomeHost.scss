@@ -1,6 +1,21 @@
 /* Become Host page styles */
 @use "App";
 
+@mixin buttonHover {
+	&:hover {
+		box-shadow: 0 4px 12px App.$primary-clr;
+		scale: 1.05;
+	}
+}
+
+@mixin transitionDelay {
+	transition: 0.35s all ease-in-out;
+}
+
+* {
+	@include transitionDelay;
+}
+
 .become-host-page {
 	display: flex;
 	align-items: center;
@@ -18,14 +33,12 @@
 	padding: 28px;
 	border-radius: 16px;
 	background: #ffffff;
-	box-shadow: 0 8px 30px rgba(29, 41, 31, 0.08);
 	align-items: stretch;
-	box-shadow: 3px 3px 5px App.$primary-clr;
 }
 
 .child-box {
 	padding: 24px;
-	border-radius: 12px;
+	border-radius: 1.5rem;
 	background-color: #fff;
 	transition: box-shadow 200ms ease, transform 200ms ease;
 	cursor: pointer;
@@ -34,12 +47,12 @@
 	gap: 12px;
 
 	&.right {
-		border-bottom: 3px solid App.$primary-clr;
-		border-right: 3px solid App.$primary-clr;
+		border-right: 3.5px solid App.$primary-clr;
+		border-top: 3.5px solid App.$primary-clr;
 	}
 	&.left {
-		border-top: 3px solid App.$primary-clr;
-		border-left: 3px solid App.$primary-clr;
+		border-left: 3.5px solid App.$primary-clr;
+		border-bottom: 3.5px solid App.$primary-clr;
 	}
 }
 .child-box h3 {
@@ -132,6 +145,9 @@
 	border: none;
 	cursor: pointer;
 	font-weight: 600;
+	transition: 0.5s all ease-in-out;
+
+	@include buttonHover;
 }
 
 .continueGoogle {
@@ -140,6 +156,8 @@
 	gap: 10px;
 	justify-content: center;
 	background: white;
+	transition: 0.25s all ease-in-out;
+	border-radius: 2rem;
 
 	img {
 		width: 20px;
@@ -153,6 +171,8 @@
 		border: 1px solid rgba(33, 37, 41, 0.08);
 		cursor: pointer;
 	}
+
+	@include buttonHover;
 }
 
 .or {
@@ -191,7 +211,7 @@
 }
 
 .welcome-text h2 {
-	margin: 0;
+	margin-bottom: 10px;
 	color: #153a2e;
 }
 
