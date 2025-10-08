@@ -227,6 +227,7 @@ export default function BecomeHost() {
 				await setDoc(doc(db, "users", uid), {
 					uid,
 					email,
+					type: "Host",
 					createdAt: serverTimestamp(),
 					// add more profile fields here as needed
 				})
@@ -242,7 +243,7 @@ export default function BecomeHost() {
 				}
 
 				setVerificationOpen(false)
-				navigate("/")
+				navigate("/setup")
 			} catch (err: unknown) {
 				console.error("Error on finalizing verification:", err)
 				setError(firebaseAuthMessage(err) || "Could not complete signup")
@@ -503,6 +504,19 @@ export default function BecomeHost() {
 											disabled={loading}
 										>
 											Continue with Google
+										</motion.button>
+									</motion.div>
+									<motion.div variants={itemVariants} className="signup-note">
+										<motion.span variants={itemVariants}>
+											Already have an account?
+										</motion.span>
+										<motion.button
+											variants={itemVariants}
+											type="button"
+											className="signup-link linkish"
+											onClick={() => setMode("login")}
+										>
+											Login
 										</motion.button>
 									</motion.div>
 									<Verification

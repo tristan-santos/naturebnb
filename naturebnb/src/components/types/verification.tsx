@@ -1,8 +1,8 @@
-// import { doc } from "firebase/firestore"
 import { motion, AnimatePresence } from "framer-motion"
 import React, { useEffect, useRef, useState } from "react"
 import "../sass/verification.scss"
 import closeLogo from "../../assets/icons/close.png"
+import closeSuccess from "../../assets/icons/closeSuccess.png"
 
 type VerificationProps = {
 	open: boolean
@@ -26,12 +26,15 @@ function Verification({
 	const inputsRef = useRef<Array<HTMLInputElement | null>>([])
 	const [resendDisabled, setResendDisabled] = useState(false)
 	const [resendCountdown, setResendCountdown] = useState(0)
+	// status: idle | success | error - used to style overlay / inputs
+	const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
 
 	useEffect(() => {
 		if (open) {
 			setValues(["", "", "", "", "", ""])
 			// focus first input when opened
 			setTimeout(() => inputsRef.current[0]?.focus(), 50)
+			setStatus("idle")
 		}
 	}, [open])
 
@@ -61,9 +64,20 @@ function Verification({
 			return
 		}
 		if (code === expectedCode) {
-			onVerified()
+			// show success state briefly on overlay before notifying parent
+			setStatus("success")
+			setTimeout(() => {
+				onVerified()
+			}, 400)
 		} else {
-			alert("Incorrect code. Please try again.")
+			// show error state (overlay will shake) and reset after a short delay
+			setStatus("error")
+			setTimeout(() => {
+				setStatus("idle")
+				setValues(["", "", "", "", "", ""])
+				// focus first input again
+				setTimeout(() => inputsRef.current[0]?.focus(), 50)
+			}, 900)
 		}
 	}
 
@@ -98,16 +112,36 @@ function Verification({
 
 	return (
 		<AnimatePresence>
-			<motion.div className="verification-overlay">
-				<motion.div className="close">
-					<motion.img src={closeLogo} onClick={onClose}></motion.img>
-				</motion.div>
+			<motion.div
+				className={`verification-overlay  ${
+					status === "success" ? "success" : ""
+				}`}
+				initial={{ opacity: 0, y: 8, x: 0 }}
+				animate={
+					status === "error"
+						? { opacity: 1, y: 0, x: [0, -12, 12, -8, 8, 0] }
+						: { opacity: 1, y: 0, x: 0 }
+				}
+				transition={
+					status === "error"
+						? { duration: 0.8, ease: "easeInOut" }
+						: { duration: 0.25 }
+				}
+			>
+				<div className="close">
+					<img
+						src={status === "success" ? closeSuccess : closeLogo}
+						onClick={onClose}
+					/>
+				</div>
+
 				<motion.div
 					className="verification-modal"
 					onClick={(e) => e.stopPropagation()}
 					initial={{ opacity: 0, y: 8 }}
 					animate={{ opacity: 1, y: 0 }}
 					exit={{ opacity: 0, y: 8 }}
+					transition={{ duration: 0.25 }}
 				>
 					<div className="titleBox">
 						<span className="subtitle">Enter Verification Code</span>
@@ -116,46 +150,62 @@ function Verification({
 							Please enter the 6-digit verification code and continue
 						</span>
 					</div>
+
 					<div className="formbox">
-						{values.map((v, i) => (
-							<input
-								key={i}
-								ref={(el) => {
-									inputsRef.current[i] = el
-								}}
-								className="inputBox"
-								inputMode="numeric"
-								pattern="[0-9]*"
-								maxLength={1}
-								value={v}
-								onChange={(e) =>
-									updateAt(i, e.target.value.replace(/[^0-9]/g, ""))
-								}
-								onKeyDown={(e) => handleKeyDown(e, i)}
-							/>
-						))}
+						{values.map((v, i) => {
+							const cls = `inputBox ${status === "error" ? "error" : ""}`
+							return (
+								<motion.input
+									key={i}
+									ref={(el) => {
+										inputsRef.current[i] = el
+									}}
+									className={cls}
+									inputMode="numeric"
+									pattern="[0-9]*"
+									maxLength={1}
+									value={v}
+									whileFocus={{ scale: 1.2, transition: { duration: 0.1 } }}
+									onChange={(e) =>
+										updateAt(i, e.target.value.replace(/[^0-9]/g, ""))
+									}
+									onKeyDown={(e) => handleKeyDown(e, i)}
+								/>
+							)
+						})}
 					</div>
-					<div className="actions">
+
+					<motion.div className="actions">
 						<motion.div>
-							<button
+							<motion.button
 								className="linkish"
 								disabled={resendDisabled}
+								whileHover={{ scale: 1.1, transition: { duration: 0.1 } }}
 								onClick={handleResendClick}
 							>
 								{resendDisabled
 									? `Resend (${resendCountdown}s)`
 									: "Resend code"}
-							</button>
+							</motion.button>
 						</motion.div>
+
 						<motion.div>
-							<button className="verifyBtn" onClick={submit}>
+							<motion.button
+								whileHover={{ scale: 1.1, transition: { duration: 0.1 } }}
+								className="verifyBtn"
+								onClick={submit}
+							>
 								Submit
-							</button>
-							<button className="linkish" onClick={onClose}>
+							</motion.button>
+							<motion.button
+								whileHover={{ scale: 1.1, transition: { duration: 0.1 } }}
+								className="linkish"
+								onClick={onClose}
+							>
 								Cancel
-							</button>
+							</motion.button>
 						</motion.div>
-					</div>
+					</motion.div>
 				</motion.div>
 			</motion.div>
 		</AnimatePresence>

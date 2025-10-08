@@ -6,6 +6,8 @@ import Landing from "./components/pages/Landing"
 import BecomeHost from "./components/pages/becomeHost"
 import Login from "./components/pages/Login"
 import Signup from "./components/pages/Signup"
+import Setup from "./components/pages/setup"
+import NotFound from "./components/pages/404"
 
 function App() {
 	return (
@@ -14,8 +16,10 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Landing />} />
 				<Route path="/BecomeHost" element={<BecomeHost />} />
+				<Route path="/setup" element={<Setup />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/signup" element={<Signup />} />
+				<Route path="*" element={<NotFound />} />
 			</Routes>
 		</BrowserRouter>
 	)

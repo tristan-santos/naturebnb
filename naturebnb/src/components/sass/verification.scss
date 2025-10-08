@@ -1,6 +1,12 @@
 @use "App";
 
+* {
+	transition: all 1s ease-in-out;
+}
+
 .verification-overlay {
+	$code-clr: black;
+
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -12,7 +18,7 @@
 	display: flex;
 	align-items: start;
 	// border: 2px solid App.$primary-clr;
-	box-shadow: 0 0 2px 2px black;
+	box-shadow: 0 0 2px 2px $code-clr;
 	justify-items: center;
 	background-color: App.$primary-clr-low;
 	border-radius: 2rem;
@@ -46,10 +52,11 @@
 			flex-direction: column;
 			align-items: start;
 			margin-top: 3rem;
+			gap: 0.25rem;
 			margin-left: -10rem;
 
 			& > * {
-				color: black;
+				color: $code-clr;
 				font-weight: bold;
 				font-family: App.$font;
 				font-size: 1rem;
@@ -70,19 +77,19 @@
 			flex-direction: row;
 			gap: 1.25rem;
 			align-items: center;
-			margin-top: 5rem;
+			margin-top: 2.5rem;
 			justify-content: center;
 
 			.inputBox {
 				width: 75px;
 				border-radius: 1rem;
-				border: 2px solid black;
+				border: 2px solid $code-clr;
 				outline: none;
 				aspect-ratio: 1/1.25;
 				font-size: 2rem;
 				text-align: center;
 				font-weight: 700;
-				color: black;
+				color: $code-clr;
 
 				&.error {
 					color: red;
@@ -101,7 +108,116 @@
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-            
+			margin-top: 1rem;
+
+			& > :first-child {
+				button {
+					position: relative;
+					font-size: 1.25rem;
+					text-decoration: none;
+					font-weight: 500;
+					color: $code-clr;
+
+					&::after {
+						content: "";
+						position: absolute;
+						bottom: 0;
+						left: 0;
+						width: 0%;
+						height: 3px;
+						background-color: $code-clr;
+						transition: 0.4s all ease-in-out;
+					}
+					&:hover::after {
+						width: 100%;
+					}
+				}
+			}
+
+			& > :last-child {
+				display: flex;
+				margin-top: 2rem;
+				gap: 1.5rem;
+				button {
+					outline: none;
+					border: none;
+					text-decoration: none;
+					padding: 1.5rem 5rem;
+					font-size: 1rem;
+					font-weight: 600;
+					border-radius: 1rem;
+					&:first-child {
+						color: white;
+						background-color: $code-clr;
+					}
+					&:last-child {
+						background-color: white;
+						color: $code-clr;
+						border: 2px solid $code-clr;
+					}
+				}
+			}
+		}
+	}
+
+	&.success {
+		$code-clr: App.$primary-clr;
+		box-shadow: 0 0 2px 2px $code-clr;
+		.verification-modal {
+			.titleBox > * {
+				color: $code-clr;
+			}
+			.formbox > .inputBox {
+				border: 2px solid $code-clr;
+				color: $code-clr;
+			}
+			.actions {
+				& > :first-child {
+					& > * {
+						color: $code-clr;
+					}
+				}
+				& > :last-child {
+					& > :first-child {
+						background-color: $code-clr;
+						color: white;
+					}
+					& > :last-child {
+						border: 2px solid $code-clr;
+						color: $code-clr;
+					}
+				}
+			}
+		}
+	}
+	&.error {
+		$code-clr: red;
+		box-shadow: 0 0 2px 2px $code-clr;
+		.verification-modal {
+			.titleBox > * {
+				color: $code-clr;
+			}
+			.formbox > .inputBox {
+				border: 2px solid $code-clr;
+				color: $code-clr;
+			}
+			.actions {
+				& > :first-child {
+					& > * {
+						color: $code-clr;
+					}
+				}
+				& > :last-child {
+					& > :first-child {
+						background-color: $code-clr;
+						color: white;
+					}
+					& > :last-child {
+						border: 2px solid $code-clr;
+						color: $code-clr;
+					}
+				}
+			}
 		}
 	}
 }
