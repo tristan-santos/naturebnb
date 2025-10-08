@@ -123,8 +123,28 @@ export default function BecomeHost() {
 				remember ? browserLocalPersistence : browserSessionPersistence
 			)
 			const result = await signInWithPopup(auth, provider)
-			console.log("Google sign-in:", result.user)
-			navigate("/")
+			console.log("Google sign-in (initiated):", result.user)
+			// Start verification flow for Google sign-ins: generate code and create pendingUsers record
+			const code = Math.floor(100000 + Math.random() * 900000).toString()
+			setVerificationCode(code)
+			const userUuid = uuidv4()
+			try {
+				const docRef = await addDoc(collection(db, "pendingUsers"), {
+					uuid: userUuid,
+					uid: result.user.uid,
+					email: result.user.email,
+					provider: "google",
+					verificationCode: code,
+					createdAt: serverTimestamp(),
+				})
+				console.log("Pending Google user saved:", docRef.id)
+				setPendingDocId(docRef.id)
+			} catch (dbErr) {
+				console.error("Failed to save pending Google user:", dbErr)
+				setPendingDocId(null)
+			}
+			// open verification modal (user is signed in via Google but final profile creation is gated by verification)
+			setVerificationOpen(true)
 		} catch (err: unknown) {
 			console.error("Google sign-in error:", err)
 			setError(firebaseAuthMessage(err) || "Google sign in failed")
@@ -219,18 +239,37 @@ export default function BecomeHost() {
 			setLoading(true)
 			setError(null)
 			try {
-				// create auth user
-				const cred = await createUserWithEmailAndPassword(auth, email, password)
-				const uid = cred.user.uid
-
-				// write user profile document (do not store password)
-				await setDoc(doc(db, "users", uid), {
-					uid,
-					email,
-					type: "Host",
-					createdAt: serverTimestamp(),
-					// add more profile fields here as needed
-				})
+				let uid: string
+				if (auth.currentUser) {
+					// User is already signed in (for example via Google). Use their uid and create profile doc.
+					uid = auth.currentUser.uid
+					await setDoc(
+						doc(db, "users", uid),
+						{
+							uid,
+							email: auth.currentUser.email,
+							type: "Host",
+							createdAt: serverTimestamp(),
+						},
+						{ merge: true }
+					)
+				} else {
+					// create auth user for email/password flow
+					const cred = await createUserWithEmailAndPassword(
+						auth,
+						email,
+						password
+					)
+					uid = cred.user.uid
+					// write user profile document (do not store password)
+					await setDoc(doc(db, "users", uid), {
+						uid,
+						email,
+						type: "Host",
+						createdAt: serverTimestamp(),
+						// add more profile fields here as needed
+					})
+				}
 
 				// delete pendingUsers doc if exists
 				if (pendingDocId) {
