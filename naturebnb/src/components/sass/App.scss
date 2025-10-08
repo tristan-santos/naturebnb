@@ -48,7 +48,7 @@ $grey-shdw: rgba(0, 0, 0, 0.473);
 		gap: 0.8rem;
 
 		img {
-			width: 70px;
+			width: 50px;
 			aspect-ratio: 1;
 			transform: rotate(25deg);
 		}
@@ -64,7 +64,7 @@ $grey-shdw: rgba(0, 0, 0, 0.473);
 	&__links {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
+		gap: 1.25rem;
 		list-style: none;
 
 		a {

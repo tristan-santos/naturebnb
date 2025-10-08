@@ -1,33 +1,59 @@
 import { Link } from "react-router-dom"
+import { motion } from "framer-motion"
 
 import logo from "../../assets/logoNobgWhite.png"
 import "../sass/App.scss"
 
-function navbar() {
+const containerVariants = {
+	hidden: { opacity: 0 },
+	show: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.13,
+			when: "beforeChildren",
+		},
+	},
+}
+
+const itemVariants = {
+	hidden: { opacity: 0, y: -8 },
+	show: {
+		opacity: 1,
+		y: 0,
+		transition: { duration: 0.5 },
+	},
+}
+
+function Navbar() {
 	return (
-		<nav className="navbar">
-			<div className="navbar__logo">
+		<motion.nav
+			className="navbar"
+			initial="hidden"
+			animate="show"
+			variants={containerVariants}
+		>
+			<motion.div className="navbar__logo" variants={itemVariants}>
 				<img src={logo} alt="NatureBnB Logo" />
 				<Link to="/" className="textLogo">
 					NatureBnB
 				</Link>
-			</div>
+			</motion.div>
 
-			<ul className="navbar__links">
-				<li>
+			<motion.ul className="navbar__links" variants={containerVariants}>
+				<motion.li variants={itemVariants}>
 					<Link to="/">Home</Link>
-				</li>
-				<li>
+				</motion.li>
+				<motion.li variants={itemVariants}>
 					<Link to="/becomeHost">Become a Host</Link>
-				</li>
-				<li>
+				</motion.li>
+				<motion.li variants={itemVariants}>
 					<Link to="/login" className="btn">
 						Login
 					</Link>
-				</li>
-			</ul>
-		</nav>
+				</motion.li>
+			</motion.ul>
+		</motion.nav>
 	)
 }
 
-export default navbar
+export default Navbar

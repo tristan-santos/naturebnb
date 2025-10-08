@@ -1,5 +1,6 @@
 // src/components/Card.tsx
 import React, { useEffect, useState } from "react"
+import { motion } from "framer-motion"
 import { collection, getDocs } from "firebase/firestore"
 import { db } from "./firebaseConfig"
 import "../../components/sass/card.scss"
@@ -68,13 +69,36 @@ const Card: React.FC<{ showAll?: boolean }> = ({ showAll = false }) => {
 		fetchHouses()
 	}, [showAll])
 
+	const containerVariants = {
+		hidden: { opacity: 0 },
+		show: {
+			opacity: 1,
+			transition: { staggerChildren: 0.18, when: "beforeChildren" },
+		},
+	}
+
+	const itemVariants = {
+		hidden: { opacity: 0, y: 20 },
+		show: { opacity: 1, y: 0, transition: { duration: 0.46 } },
+	}
+
 	return (
-		<div className="card-container">
+		<motion.div
+			className="card-container"
+			variants={containerVariants}
+			initial="hidden"
+			animate="show"
+		>
 			{houses.length === 0 ? (
 				<p>No houses Available Yet...</p>
 			) : (
 				houses.map((house) => (
-					<div className="card" key={house.id}>
+					<motion.div
+						className="card"
+						key={house.id}
+						variants={itemVariants}
+						layout
+					>
 						<img
 							src={house.mainImage || placeHolder}
 							alt={house.houseName}
@@ -98,10 +122,10 @@ const Card: React.FC<{ showAll?: boolean }> = ({ showAll = false }) => {
 								))}
 							</ul>
 						</div>
-					</div>
+					</motion.div>
 				))
 			)}
-		</div>
+		</motion.div>
 	)
 }
 
