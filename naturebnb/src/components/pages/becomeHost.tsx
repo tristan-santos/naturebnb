@@ -7,6 +7,8 @@ import Verification from "../types/verification"
 import googleLogo from "../../assets/icons/google (1).png"
 import welcomLogo from "../../assets/Tablet login-rafiki.svg"
 import signupLogo from "../../assets/Sign up-rafiki.svg"
+import hideEye from "../../assets/icons/hide.png"
+import openEye from "../../assets/icons/view.png"
 
 // Firebase auth helpers
 import {
@@ -28,7 +30,12 @@ import {
 	deleteDoc,
 	doc,
 	setDoc,
+	getDocs,
+	getDoc,
+	query,
+	where,
 } from "firebase/firestore"
+import { useAuth } from "../context/AuthContext"
 
 export default function BecomeHost() {
 	const [email, setEmail] = useState("")
@@ -41,9 +48,25 @@ export default function BecomeHost() {
 	const [verificationOpen, setVerificationOpen] = useState(false)
 	const [verificationCode, setVerificationCode] = useState("")
 	const [pendingDocId, setPendingDocId] = useState<string | null>(null)
+	// password visibility states for login, signup password, signup confirm
+	const [viewLogin, setViewLogin] = useState(false)
+	const [viewSignupPass, setViewSignupPass] = useState(false)
+	const [viewSignupConfirm, setViewSignupConfirm] = useState(false)
 
 	const navigate = useNavigate()
 	const auth = getAuth()
+	const { setUser } = useAuth()
+
+	// Helper: store user record (object) in localStorage under 'user'
+	function saveUserToLocal(userObj: Record<string, unknown> | null) {
+		if (!userObj) return
+		try {
+			localStorage.setItem("user", JSON.stringify(userObj))
+			setUser(userObj)
+		} catch (e) {
+			console.warn("Failed to save user to localStorage", e)
+		}
+	}
 
 	const containerVariants = {
 		hidden: { opacity: 0 },
@@ -88,6 +111,8 @@ export default function BecomeHost() {
 				return "Incorrect password. If you forgot it, use 'Forgot password'."
 			case "auth/user-not-found":
 				return "No account exists with that email. Please sign up first."
+			case "auth/invalid-credential":
+				return "The provided credential is invalid or has expired. Try signing in again. If this was a social sign-in, re-authenticate and try again."
 			default:
 				return msg || String(err)
 		}
@@ -102,12 +127,54 @@ export default function BecomeHost() {
 				auth,
 				remember ? browserLocalPersistence : browserSessionPersistence
 			)
+			// First check Firestore users collection for a matching email and (optionally) stored password
+			try {
+				const q = query(collection(db, "users"), where("email", "==", email))
+				const snap = await getDocs(q)
+				if (snap.empty) {
+					setError("No account exists with that email. Please sign up first.")
+					setLoading(false)
+					return
+				}
+				// If your users documents store a plaintext `password` field (insecure), validate it here
+				const docData = snap.docs[0].data() as Record<string, unknown>
+				const storedPass =
+					typeof docData.password === "string" ? docData.password : undefined
+				if (storedPass !== undefined) {
+					if (storedPass !== password) {
+						setError("Incorrect password. Please try again.")
+						setLoading(false)
+						return
+					}
+					// password matched the stored value; proceed to sign in with Firebase Auth
+				}
+			} catch (dbCheckErr) {
+				console.warn(
+					"Error checking users collection before sign-in:",
+					dbCheckErr
+				)
+				// proceed with auth attempt if DB check fails
+			}
+
 			const cred = await signInWithEmailAndPassword(auth, email, password)
 			console.log("Signed in:", cred.user)
+			// fetch user profile from Firestore (if exists) and save locally
+			try {
+				const ud = await getDoc(doc(db, "users", cred.user.uid))
+				if (ud.exists()) {
+					saveUserToLocal(ud.data())
+				}
+			} catch (e) {
+				console.warn("Failed to fetch user profile after sign-in", e)
+			}
 			navigate("/")
 		} catch (err: unknown) {
-			console.error("Login error:", err)
-			setError(firebaseAuthMessage(err) || "Failed to sign in")
+			const a = err as { code?: string; message?: string }
+			console.error("Login error:", a)
+			setError(
+				(a?.code ? `${a.code}: ` : "") +
+					(firebaseAuthMessage(err) || a?.message || "Failed to sign in")
+			)
 		} finally {
 			setLoading(false)
 		}
@@ -123,6 +190,25 @@ export default function BecomeHost() {
 				remember ? browserLocalPersistence : browserSessionPersistence
 			)
 			const result = await signInWithPopup(auth, provider)
+			const userEmail = result.user.email
+			// Check if user already exists in Firestore
+			const userQuery = query(
+				collection(db, "users"),
+				where("email", "==", userEmail)
+			)
+			const userSnap = await getDocs(userQuery)
+			if (!userEmail || !result.user.uid) {
+				setError("Google account did not return a valid email or uid.")
+				setLoading(false)
+				return
+			}
+			if (!userSnap.empty) {
+				setError(
+					"An account with this email already exists. Please login or use a different email."
+				)
+				setLoading(false)
+				return
+			}
 			console.log("Google sign-in (initiated):", result.user)
 			// Start verification flow for Google sign-ins: generate code and create pendingUsers record
 			const code = Math.floor(100000 + Math.random() * 900000).toString()
@@ -132,7 +218,7 @@ export default function BecomeHost() {
 				const docRef = await addDoc(collection(db, "pendingUsers"), {
 					uuid: userUuid,
 					uid: result.user.uid,
-					email: result.user.email,
+					email: userEmail,
 					provider: "google",
 					verificationCode: code,
 					createdAt: serverTimestamp(),
@@ -146,8 +232,12 @@ export default function BecomeHost() {
 			// open verification modal (user is signed in via Google but final profile creation is gated by verification)
 			setVerificationOpen(true)
 		} catch (err: unknown) {
-			console.error("Google sign-in error:", err)
-			setError(firebaseAuthMessage(err) || "Google sign in failed")
+			const a = err as { code?: string; message?: string }
+			console.error("Google sign-in error:", a)
+			setError(
+				(a?.code ? `${a.code}: ` : "") +
+					(firebaseAuthMessage(err) || a?.message || "Google sign in failed")
+			)
 		} finally {
 			setLoading(false)
 		}
@@ -166,6 +256,19 @@ export default function BecomeHost() {
 				auth,
 				remember ? browserLocalPersistence : browserSessionPersistence
 			)
+			// Check if user already exists in Firestore
+			const userQuery = query(
+				collection(db, "users"),
+				where("email", "==", email)
+			)
+			const userSnap = await getDocs(userQuery)
+			if (userSnap && !userSnap.empty) {
+				setError(
+					"An account with this email already exists. Please login or use a different email."
+				)
+				setLoading(false)
+				return
+			}
 			// generate verification code and store a minimal pending user record (do NOT store passwords)
 			const code = Math.floor(100000 + Math.random() * 900000).toString()
 			setVerificationCode(code)
@@ -282,6 +385,13 @@ export default function BecomeHost() {
 				}
 
 				setVerificationOpen(false)
+				// fetch created/merged user doc and save to localStorage
+				try {
+					const ud = await getDoc(doc(db, "users", uid))
+					if (ud.exists()) saveUserToLocal(ud.data())
+				} catch (e) {
+					console.warn("Failed to fetch user profile after verification", e)
+				}
 				navigate("/setup")
 			} catch (err: unknown) {
 				console.error("Error on finalizing verification:", err)
@@ -291,6 +401,8 @@ export default function BecomeHost() {
 			}
 		})()
 	}
+
+	// removed DOM-based toggling; using React state to control input type
 
 	return (
 		<motion.div key={mode} className="become-host-page">
@@ -306,7 +418,7 @@ export default function BecomeHost() {
 							>
 								<motion.h3 variants={itemVariants}>Welcome back</motion.h3>
 								<motion.p variants={itemVariants} className="muted">
-									Sign in to manage listings and bookings
+									Log in to manage listings and bookings
 								</motion.p>
 								<motion.form
 									variants={containerVariants}
@@ -330,14 +442,21 @@ export default function BecomeHost() {
 										<motion.span variants={itemVariants} className="label-text">
 											Password
 										</motion.span>
-										<motion.input
-											variants={itemVariants}
-											type="password"
-											value={password}
-											onChange={(e) => setPassword(e.target.value)}
-											placeholder="Your password"
-											required
-										/>
+										<motion.div className="inputBox">
+											<motion.input
+												variants={itemVariants}
+												type={viewLogin ? "text" : "password"}
+												className="pswrdLog"
+												value={password}
+												onChange={(e) => setPassword(e.target.value)}
+												placeholder="Your password"
+												required
+											/>
+											<motion.img
+												src={viewLogin ? hideEye : openEye}
+												onClick={() => setViewLogin((s) => !s)}
+											/>
+										</motion.div>
 									</motion.label>
 									<motion.div variants={itemVariants} className="row between">
 										<motion.label variants={itemVariants} className="remember">
@@ -492,27 +611,40 @@ export default function BecomeHost() {
 										<motion.span variants={itemVariants} className="label-text">
 											Password
 										</motion.span>
-										<motion.input
-											variants={itemVariants}
-											type="password"
-											value={password}
-											onChange={(e) => setPassword(e.target.value)}
-											placeholder="Create a password"
-											required
-										/>
+										<motion.div className="inputBox">
+											<motion.input
+												variants={itemVariants}
+												type={viewSignupPass ? "text" : "password"}
+												className="passSign"
+												value={password}
+												onChange={(e) => setPassword(e.target.value)}
+												placeholder="Create a password"
+												required
+											/>
+											<motion.img
+												src={viewSignupPass ? hideEye : openEye}
+												onClick={() => setViewSignupPass((s) => !s)}
+											/>
+										</motion.div>
 									</motion.label>
 									<motion.label variants={itemVariants}>
 										<motion.span variants={itemVariants} className="label-text">
 											Confirm password
 										</motion.span>
-										<motion.input
-											variants={itemVariants}
-											type="password"
-											value={confirmPassword}
-											onChange={(e) => setConfirmPassword(e.target.value)}
-											placeholder="Confirm password"
-											required
-										/>
+										<motion.div className="inputBox">
+											<motion.input
+												variants={itemVariants}
+												type={viewSignupConfirm ? "text" : "password"}
+												value={confirmPassword}
+												onChange={(e) => setConfirmPassword(e.target.value)}
+												placeholder="Confirm password"
+												required
+											/>
+											<motion.img
+												src={viewSignupConfirm ? hideEye : openEye}
+												onClick={() => setViewSignupConfirm((s) => !s)}
+											/>
+										</motion.div>
 									</motion.label>
 									{error && <div className="error">{error}</div>}
 									<motion.button

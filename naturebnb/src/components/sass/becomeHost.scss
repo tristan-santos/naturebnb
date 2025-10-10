@@ -103,8 +103,7 @@
 	font-size: 0.95rem;
 }
 
-.login-form input[type="email"],
-.login-form input[type="password"] {
+.login-form input {
 	padding: 10px 12px;
 	border-radius: 8px;
 	border: 1px solid rgba(28, 40, 34, 0.08);
@@ -244,4 +243,15 @@
 
 .center-box {
 	position: relative; /* ensure absolute children if needed for animation */
+}
+.inputBox {
+	display: flex;
+	position: relative;
+	flex-direction: column;
+
+	img {
+		position: absolute;
+		right: 10px;
+		top: 7px;
+	}
 }
