@@ -24,7 +24,7 @@ const itemVariants = {
 	},
 }
 
-function Navbar() {
+function landingBar() {
 	return (
 		<motion.nav
 			className="navbar"
@@ -56,4 +56,4 @@ function Navbar() {
 	)
 }
 
-export default Navbar
+export default landingBar

@@ -8,6 +8,7 @@ import welcomLogo from "../../assets/Tablet login-rafiki.svg"
 import signupLogo from "../../assets/Sign up-rafiki.svg"
 import hideEye from "../../assets/icons/hide.png"
 import openEye from "../../assets/icons/view.png"
+import LandingBar from "../../components/types/landingBar"
 
 // Firebase auth helpers
 import {
@@ -88,6 +89,7 @@ export default function BecomeHost() {
 				const userData = userDoc.data()
 				const userId = userDoc.id
 				navigate("/setup", { state: { id: userId, user: userData } })
+				location.pathname = "/setup"
 			} else {
 				throw new Error("User data not found in Firestore.")
 			}
@@ -190,278 +192,281 @@ export default function BecomeHost() {
 	}
 
 	return (
-		<motion.div
-			key={mode}
-			className="become-host-page"
-			variants={containerVariants}
-			initial="hidden"
-			animate="show"
-		>
+		<>
+			<LandingBar />
 			<motion.div
-				className="center-box"
-				aria-label="Become a host container"
+				key={mode}
+				className="become-host-page"
 				variants={containerVariants}
+				initial="hidden"
+				animate="show"
 			>
-				<AnimatePresence>
-					{mode === "login" ? (
-						<>
-							<motion.div
-								className="child-box left form-box"
-								initial="hidden"
-								animate="show"
-								variants={containerVariants}
-							>
-								<motion.h3 variants={itemVariants}>Welcome back</motion.h3>
-								<motion.p className="muted" variants={itemVariants}>
-									Log in to manage listings and bookings
-								</motion.p>
-								<motion.form
-									className="login-form"
-									onSubmit={handleLogin}
+				<motion.div
+					className="center-box"
+					aria-label="Become a host container"
+					variants={containerVariants}
+				>
+					<AnimatePresence>
+						{mode === "login" ? (
+							<>
+								<motion.div
+									className="child-box left form-box"
+									initial="hidden"
+									animate="show"
 									variants={containerVariants}
 								>
-									<motion.label variants={itemVariants}>
-										<motion.span className="label-text">Email</motion.span>
-										<motion.input
-											type="email"
-											value={email}
-											onChange={(e) => setEmail(e.target.value)}
-											placeholder="you@example.com"
-											required
-										/>
-									</motion.label>
-									<motion.label variants={itemVariants}>
-										<motion.span className="label-text">Password</motion.span>
-										<motion.div className="inputBox">
+									<motion.h3 variants={itemVariants}>Welcome back</motion.h3>
+									<motion.p className="muted" variants={itemVariants}>
+										Log in to manage listings and bookings
+									</motion.p>
+									<motion.form
+										className="login-form"
+										onSubmit={handleLogin}
+										variants={containerVariants}
+									>
+										<motion.label variants={itemVariants}>
+											<motion.span className="label-text">Email</motion.span>
 											<motion.input
-												type={viewLogin ? "text" : "password"}
-												className="pswrdLog"
-												value={password}
-												onChange={(e) => setPassword(e.target.value)}
-												placeholder="Your password"
+												type="email"
+												value={email}
+												onChange={(e) => setEmail(e.target.value)}
+												placeholder="you@example.com"
 												required
 											/>
-											<motion.img
-												src={viewLogin ? hideEye : openEye}
-												onClick={() => setViewLogin((s) => !s)}
-											/>
-										</motion.div>
-									</motion.label>
-									<motion.div className="row between" variants={itemVariants}>
-										<motion.label className="remember">
-											<motion.input
-												type="checkbox"
-												checked={remember}
-												onChange={(e) => setRemember(e.target.checked)}
-											/>
-											<motion.span>Remember me</motion.span>
 										</motion.label>
+										<motion.label variants={itemVariants}>
+											<motion.span className="label-text">Password</motion.span>
+											<motion.div className="inputBox">
+												<motion.input
+													type={viewLogin ? "text" : "password"}
+													className="pswrdLog"
+													value={password}
+													onChange={(e) => setPassword(e.target.value)}
+													placeholder="Your password"
+													required
+												/>
+												<motion.img
+													src={viewLogin ? hideEye : openEye}
+													onClick={() => setViewLogin((s) => !s)}
+												/>
+											</motion.div>
+										</motion.label>
+										<motion.div className="row between" variants={itemVariants}>
+											<motion.label className="remember">
+												<motion.input
+													type="checkbox"
+													checked={remember}
+													onChange={(e) => setRemember(e.target.checked)}
+												/>
+												<motion.span>Remember me</motion.span>
+											</motion.label>
+											<motion.button
+												type="button"
+												className="linkish"
+												onClick={handleForgot}
+											>
+												Forgot password?
+											</motion.button>
+										</motion.div>
+										{error && <div className="error">{error}</div>}
 										<motion.button
-											type="button"
-											className="linkish"
-											onClick={handleForgot}
+											className="primary"
+											type="submit"
+											disabled={loading}
+											variants={itemVariants}
 										>
-											Forgot password?
+											{loading ? "Signing in..." : "Sign in"}
 										</motion.button>
-									</motion.div>
-									{error && <div className="error">{error}</div>}
-									<motion.button
-										className="primary"
-										type="submit"
-										disabled={loading}
-										variants={itemVariants}
-									>
-										{loading ? "Signing in..." : "Sign in"}
-									</motion.button>
-									<motion.div className="or" variants={itemVariants}>
-										or
-									</motion.div>
+										<motion.div className="or" variants={itemVariants}>
+											or
+										</motion.div>
+										<motion.div
+											className="continueGoogle"
+											variants={containerVariants}
+										>
+											<motion.img src={googleLogo} alt="Google logo" />
+											<motion.button
+												type="button"
+												className="google"
+												onClick={handleGoogle}
+												disabled={loading}
+											>
+												Continue with Google
+											</motion.button>
+										</motion.div>
+										<motion.div className="signup-note" variants={itemVariants}>
+											<motion.span>Doesn't have an account yet?</motion.span>
+											<motion.button
+												type="button"
+												className="signup-link linkish"
+												onClick={() => setMode("signup")}
+											>
+												Signup
+											</motion.button>
+										</motion.div>
+									</motion.form>
+								</motion.div>
+
+								<motion.div
+									initial="hidden"
+									animate="show"
+									className="child-box right welcome-box"
+									variants={containerVariants}
+								>
 									<motion.div
-										className="continueGoogle"
+										className="welcome-text"
 										variants={containerVariants}
 									>
-										<motion.img src={googleLogo} alt="Google logo" />
-										<motion.button
-											type="button"
-											className="google"
-											onClick={handleGoogle}
-											disabled={loading}
-										>
-											Continue with Google
-										</motion.button>
+										<motion.h2 variants={itemVariants}>
+											Welcome to NatureBnB
+										</motion.h2>
+										<motion.p className="muted" variants={itemVariants}>
+											We're glad you're here — Ready to host your space?
+										</motion.p>
 									</motion.div>
-									<motion.div className="signup-note" variants={itemVariants}>
-										<motion.span>Doesn't have an account yet?</motion.span>
-										<motion.button
-											type="button"
-											className="signup-link linkish"
-											onClick={() => setMode("signup")}
-										>
-											Signup
-										</motion.button>
-									</motion.div>
-								</motion.form>
-							</motion.div>
-
-							<motion.div
-								initial="hidden"
-								animate="show"
-								className="child-box right welcome-box"
-								variants={containerVariants}
-							>
-								<motion.div
-									className="welcome-text"
-									variants={containerVariants}
-								>
-									<motion.h2 variants={itemVariants}>
-										Welcome to NatureBnB
-									</motion.h2>
-									<motion.p className="muted" variants={itemVariants}>
-										We're glad you're here — Ready to host your space?
-									</motion.p>
-								</motion.div>
-								<motion.div className="welcome-media" variants={itemVariants}>
-									<motion.img
-										src={welcomLogo}
-										alt="Welcome"
-										className="right-img"
-									/>
-								</motion.div>
-							</motion.div>
-						</>
-					) : (
-						<>
-							<motion.div
-								initial="hidden"
-								animate="show"
-								className="child-box left welcome-box"
-								variants={containerVariants}
-							>
-								<motion.div
-									className="welcome-text"
-									variants={containerVariants}
-								>
-									<motion.h2 variants={itemVariants}>
-										Thanks for joining
-									</motion.h2>
-									<motion.p className="muted" variants={itemVariants}>
-										You're a step away from discovering and hosting unique
-										nature stays.
-									</motion.p>
-								</motion.div>
-								<motion.div className="welcome-media" variants={itemVariants}>
-									<motion.img
-										src={signupLogo}
-										alt="Signup"
-										className="right-img"
-									/>
-								</motion.div>
-							</motion.div>
-
-							<motion.div
-								className="child-box right form-box"
-								initial="hidden"
-								animate="show"
-								variants={containerVariants}
-							>
-								<motion.h3 variants={itemVariants}>
-									Create your account
-								</motion.h3>
-								<motion.p className="muted" variants={itemVariants}>
-									Sign up to host or book unique nature stays
-								</motion.p>
-								<motion.form
-									className="login-form"
-									onSubmit={handleSignup}
-									variants={containerVariants}
-								>
-									<motion.label variants={itemVariants}>
-										<motion.span className="label-text">Email</motion.span>
-										<motion.input
-											type="email"
-											value={email}
-											onChange={(e) => setEmail(e.target.value)}
-											placeholder="you@example.com"
-											required
+									<motion.div className="welcome-media" variants={itemVariants}>
+										<motion.img
+											src={welcomLogo}
+											alt="Welcome"
+											className="right-img"
 										/>
-									</motion.label>
-									<motion.label variants={itemVariants}>
-										<motion.span className="label-text">Password</motion.span>
-										<motion.div className="inputBox">
-											<motion.input
-												type={viewSignupPass ? "text" : "password"}
-												className="passSign"
-												value={password}
-												onChange={(e) => setPassword(e.target.value)}
-												placeholder="Create a password"
-												required
-											/>
-											<motion.img
-												src={viewSignupPass ? hideEye : openEye}
-												onClick={() => setViewSignupPass((s) => !s)}
-											/>
-										</motion.div>
-									</motion.label>
-									<motion.label variants={itemVariants}>
-										<motion.span className="label-text">
-											Confirm password
-										</motion.span>
-										<motion.div className="inputBox">
-											<motion.input
-												type={viewSignupConfirm ? "text" : "password"}
-												value={confirmPassword}
-												onChange={(e) => setConfirmPassword(e.target.value)}
-												placeholder="Confirm password"
-												required
-											/>
-											<motion.img
-												src={viewSignupConfirm ? hideEye : openEye}
-												onClick={() => setViewSignupConfirm((s) => !s)}
-											/>
-										</motion.div>
-									</motion.label>
-									{error && <div className="error">{error}</div>}
-									<motion.button
-										className="primary"
-										type="submit"
-										disabled={loading}
-										variants={itemVariants}
-									>
-										{loading ? "Creating..." : "Create account"}
-									</motion.button>
-									<motion.div className="or" variants={itemVariants}>
-										or
 									</motion.div>
+								</motion.div>
+							</>
+						) : (
+							<>
+								<motion.div
+									initial="hidden"
+									animate="show"
+									className="child-box left welcome-box"
+									variants={containerVariants}
+								>
 									<motion.div
-										className="continueGoogle"
+										className="welcome-text"
 										variants={containerVariants}
 									>
-										<motion.img src={googleLogo} alt="Google logo" />
+										<motion.h2 variants={itemVariants}>
+											Thanks for joining
+										</motion.h2>
+										<motion.p className="muted" variants={itemVariants}>
+											You're a step away from discovering and hosting unique
+											nature stays.
+										</motion.p>
+									</motion.div>
+									<motion.div className="welcome-media" variants={itemVariants}>
+										<motion.img
+											src={signupLogo}
+											alt="Signup"
+											className="right-img"
+										/>
+									</motion.div>
+								</motion.div>
+
+								<motion.div
+									className="child-box right form-box"
+									initial="hidden"
+									animate="show"
+									variants={containerVariants}
+								>
+									<motion.h3 variants={itemVariants}>
+										Create your account
+									</motion.h3>
+									<motion.p className="muted" variants={itemVariants}>
+										Sign up to host or book unique nature stays
+									</motion.p>
+									<motion.form
+										className="login-form"
+										onSubmit={handleSignup}
+										variants={containerVariants}
+									>
+										<motion.label variants={itemVariants}>
+											<motion.span className="label-text">Email</motion.span>
+											<motion.input
+												type="email"
+												value={email}
+												onChange={(e) => setEmail(e.target.value)}
+												placeholder="you@example.com"
+												required
+											/>
+										</motion.label>
+										<motion.label variants={itemVariants}>
+											<motion.span className="label-text">Password</motion.span>
+											<motion.div className="inputBox">
+												<motion.input
+													type={viewSignupPass ? "text" : "password"}
+													className="passSign"
+													value={password}
+													onChange={(e) => setPassword(e.target.value)}
+													placeholder="Create a password"
+													required
+												/>
+												<motion.img
+													src={viewSignupPass ? hideEye : openEye}
+													onClick={() => setViewSignupPass((s) => !s)}
+												/>
+											</motion.div>
+										</motion.label>
+										<motion.label variants={itemVariants}>
+											<motion.span className="label-text">
+												Confirm password
+											</motion.span>
+											<motion.div className="inputBox">
+												<motion.input
+													type={viewSignupConfirm ? "text" : "password"}
+													value={confirmPassword}
+													onChange={(e) => setConfirmPassword(e.target.value)}
+													placeholder="Confirm password"
+													required
+												/>
+												<motion.img
+													src={viewSignupConfirm ? hideEye : openEye}
+													onClick={() => setViewSignupConfirm((s) => !s)}
+												/>
+											</motion.div>
+										</motion.label>
+										{error && <div className="error">{error}</div>}
 										<motion.button
-											type="button"
-											className="google"
-											onClick={handleGoogle}
+											className="primary"
+											type="submit"
 											disabled={loading}
+											variants={itemVariants}
 										>
-											Continue with Google
+											{loading ? "Creating..." : "Create account"}
 										</motion.button>
-									</motion.div>
-									<motion.div className="signup-note" variants={itemVariants}>
-										<motion.span>Already have an account?</motion.span>
-										<motion.button
-											type="button"
-											className="signup-link linkish"
-											onClick={() => setMode("login")}
+										<motion.div className="or" variants={itemVariants}>
+											or
+										</motion.div>
+										<motion.div
+											className="continueGoogle"
+											variants={containerVariants}
 										>
-											Login
-										</motion.button>
-									</motion.div>
-								</motion.form>
-							</motion.div>
-						</>
-					)}
-				</AnimatePresence>
+											<motion.img src={googleLogo} alt="Google logo" />
+											<motion.button
+												type="button"
+												className="google"
+												onClick={handleGoogle}
+												disabled={loading}
+											>
+												Continue with Google
+											</motion.button>
+										</motion.div>
+										<motion.div className="signup-note" variants={itemVariants}>
+											<motion.span>Already have an account?</motion.span>
+											<motion.button
+												type="button"
+												className="signup-link linkish"
+												onClick={() => setMode("login")}
+											>
+												Login
+											</motion.button>
+										</motion.div>
+									</motion.form>
+								</motion.div>
+							</>
+						)}
+					</AnimatePresence>
+				</motion.div>
 			</motion.div>
-		</motion.div>
+		</>
 	)
 }

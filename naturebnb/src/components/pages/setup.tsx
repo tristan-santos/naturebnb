@@ -98,7 +98,12 @@ export default function Setup() {
 									<img src={check} alt="check" />
 									<button className="Agree">Agree</button>
 								</div>
-								<div className="disagree">
+								<div
+									className="disagree"
+									onClick={() => {
+										navigate("/")
+									}}
+								>
 									<img src={close} alt="close" />
 									<button className="Disagree">Disagree</button>
 								</div>
