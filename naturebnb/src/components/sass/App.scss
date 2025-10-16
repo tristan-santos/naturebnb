@@ -2,7 +2,7 @@ $primary-clr: #39955b;
 $primary-clr-low: #fffffffe;
 $primary-drk: #1d482d;
 $background-clr: #fff;
-$font: Montserrat, Poppins, sans-serif;
+$font: "Montserrat", "Poppins", sans-serif;
 $grey-shdw: rgba(0, 0, 0, 0.473);
 
 * {
@@ -13,6 +13,11 @@ $grey-shdw: rgba(0, 0, 0, 0.473);
 }
 ::-webkit-scrollbar {
 	display: none;
+}
+body {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 @mixin buttonDefaults($bgColor, $textColor) {
 	background-color: $bgColor;
