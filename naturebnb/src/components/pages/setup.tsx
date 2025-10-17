@@ -61,6 +61,8 @@ export default function Setup() {
 		if (!userInfo) {
 			console.warn("No user information provided. Redirecting to login.")
 			navigate("/", { replace: true })
+		} else {
+			console.log("User information received:", userInfo)
 		}
 	}, [userInfo, navigate])
 	const cards = document.querySelectorAll(".card")

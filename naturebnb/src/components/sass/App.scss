@@ -82,6 +82,11 @@ body {
 			&:hover {
 				color: $primary-drk;
 			}
+			&.active {
+				color: $primary-clr;
+				text-decoration: underline;
+				font-weight: 700;
+			}
 		}
 
 		.btn {

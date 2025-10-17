@@ -24,7 +24,7 @@ const itemVariants = {
 	},
 }
 
-function landingBar() {
+function landingBar({ loc }) {
 	return (
 		<motion.nav
 			className="navbar"
@@ -40,11 +40,19 @@ function landingBar() {
 			</motion.div>
 
 			<motion.ul className="navbar__links" variants={containerVariants}>
-				<motion.li variants={itemVariants}>
+				<motion.li
+					variants={itemVariants}
+					{...(loc === "/" ? { className: "active" } : {})}
+				>
 					<Link to="/">Home</Link>
 				</motion.li>
 				<motion.li variants={itemVariants}>
-					<Link to="/becomeHost">Become a Host</Link>
+					<Link
+						to="/becomeHost"
+						{...(loc === "/becomeHost" ? { className: "active" } : {})}
+					>
+						Become a Host
+					</Link>
 				</motion.li>
 				<motion.li variants={itemVariants}>
 					<Link to="/login" className="btn">
