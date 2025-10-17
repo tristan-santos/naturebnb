@@ -193,7 +193,7 @@ export default function BecomeHost() {
 
 	return (
 		<>
-			<LandingBar loc="becomeHost" />
+			<LandingBar />
 			<motion.div
 				key={mode}
 				className="become-host-page"
