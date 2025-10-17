@@ -24,7 +24,9 @@ const itemVariants = {
 	},
 }
 
-function landingBar({ loc }: { loc: string }) {
+function landingBar() {
+	const loc: string = window.location.pathname
+
 	return (
 		<motion.nav
 			className="navbar"
