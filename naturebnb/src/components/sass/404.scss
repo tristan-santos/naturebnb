@@ -1,12 +1,13 @@
 @use "App" as app;
 
 .center-box404 {
+	width: 100vw;
+	height: 100vh;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	gap: 1.5rem;
 	align-items: center;
 	justify-items: center;
-	margin: 3rem auto;
 
 	.error404 {
 		display: flex;

@@ -118,7 +118,7 @@ export default function BecomeHost() {
 			const userDoc = await getDoc(userDocRef)
 			if (userDoc.exists()) {
 				const userData = userDoc.data()
-				navigate("/setup", { state: { user: userData } })
+				navigate("/setup", { state: userData })
 			} else {
 				throw new Error("User data not found in Firestore.")
 			}
@@ -148,10 +148,13 @@ export default function BecomeHost() {
 			)
 			const cred = await createUserWithEmailAndPassword(auth, email, password)
 			const userInfo = {
-				uid: cred.user.uid,
-				email,
-				password,
-				createdAt: new Date().toISOString(),
+				user: {
+					uid: cred.user.uid,
+					email,
+					password,
+					role: "Host",
+					initialCreation: new Date().toISOString(),
+				},
 			}
 			await setDoc(doc(db, "users", cred.user.uid), userInfo)
 			navigate("/setup", { state: userInfo })

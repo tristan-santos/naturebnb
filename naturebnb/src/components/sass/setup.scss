@@ -4,12 +4,12 @@
 	.title {
 		background-color: #ffffffe9;
 		border: 3px solid App.$primary-clr;
-		margin-bottom: 40px;
+		margin-bottom: 30px;
 		border-radius: 1rem;
 		padding: 0rem 2.5rem;
 		color: App.$primary-clr;
-		font-weight: 600;
-		font-size: 1.2rem;
+		font-weight: 700;
+		font-size: 1.4rem;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -429,6 +429,99 @@
 
 								&:-webkit-autofill:focus {
 									-webkit-box-shadow: 0 0 0 1000px #bbdefb inset;
+								}
+							}
+						}
+					}
+				}
+			}
+			&.three {
+				@include step();
+				.form.step-three {
+					display: flex;
+					flex-direction: column;
+					gap: 0.5rem;
+
+					h3 {
+						margin-top: 0rem;
+					}
+
+					.birth-select {
+						display: flex;
+						gap: 1rem;
+						padding: 0.1rem 1.2rem 0 1.2rem;
+
+						select {
+							padding: 0.5rem;
+							border-radius: 8px;
+							font-size: 1rem;
+							border: 1px solid #ccc;
+							width: 100%;
+						}
+					}
+					h3 {
+						padding: 0.5rem;
+					}
+					.address {
+						display: grid;
+						grid-template-columns: 1fr 1fr;
+						gap: 0.5rem;
+						margin-bottom: 1rem;
+						input {
+							padding: 0.5rem;
+							border-radius: 8px;
+							font-size: 1rem;
+							font-weight: 500;
+							border: 1px solid #ccc;
+							width: 100%;
+							&:-webkit-autofill {
+								-webkit-box-shadow: 0 0 0 1000px #e3f2fd inset;
+								-webkit-text-fill-color: #000;
+								transition: all 5000s ease-in-out 0s;
+							}
+
+							&:-webkit-autofill:focus {
+								-webkit-box-shadow: 0 0 0 1000px #bbdefb inset;
+							}
+						}
+					}
+				}
+			}
+			&.four {
+				.center {
+					height: 100%;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					justify-content: center;
+
+					& .box {
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						gap: 4rem;
+						justify-content: center;
+
+						.text {
+							span {
+								font-size: 2.5rem;
+								font-weight: 700;
+								color: App.$primary-clr;
+							}
+						}
+						.img {
+							scale: 1.5;
+						}
+
+						.button {
+							button {
+								padding: 1rem 3rem;
+								border-radius: 1rem;
+								background-color: App.$primary-clr;
+								color: white;
+
+								&:hover {
+									transform: scale(1.1);
 								}
 							}
 						}

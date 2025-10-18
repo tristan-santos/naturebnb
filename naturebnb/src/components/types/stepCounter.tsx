@@ -8,7 +8,7 @@ interface StepCounterProps {
 
 const StepCounter: React.FC<StepCounterProps> = ({
 	currentStep,
-	totalSteps = 5,
+	totalSteps = 3,
 }) => {
 	return (
 		<div className="step-counter">

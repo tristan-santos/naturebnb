@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"gitgit" : "git add . && git commit -m 'update' && git push origin main",
+		"gitgit": "git add . && git commit -m 'update' && git push origin main",
 		"tapos": "npm run build && firebase deploy",
 		"dev": "vite",
 		"build": "tsc -b && vite build",
@@ -12,6 +12,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@react-google-maps/api": "^2.20.7",
 		"firebase": "^12.3.0",
 		"framer-motion": "^12.23.22",
 		"react": "^19.1.1",

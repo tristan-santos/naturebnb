@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { use, useEffect, useRef, useState } from "react"
 import type { ClipboardEvent } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import "../sass/becomeHost.scss"
@@ -8,53 +8,62 @@ import check from "../../assets/icons/checked.png"
 import close from "../../assets/icons/multiply.png"
 import logo from "../../assets/logoNobgWhite.png"
 import StepCounter from "../../components/types/stepCounter"
+import getCountry from "../types/getCountry"
+import AnimatedCheck from "../types/animatedCheck"
+import type { UserInfo } from "firebase/auth"
 
-// interface users {
-// 	uid: string
-// 	email: string
-// 	password: string
-// 	role: string
-// 	name: {
-// 		firstname: string
-// 		middlename: string
-// 		lastname: string
-// 	}
-// 	gender: string
+interface users {
+	uid: string
+	email: string
+	password: string
+	role: string
+	name: {
+		suffix: string
+		firstname: string
+		middlename: string
+		lastname: string
+	}
+	gender: string
 
-// 	phoneNumber: {
-// 		country: string
-// 		number: string
-// 	}
-// 	dateOfBirth: {
-// 		year: number
-// 		month: number
-// 		day: number
-// 	}
-// 	address: {
-// 		province: {
-// 			province: string
-// 			city: string
-// 			street: string
-// 			addressLine: string
-// 			zipCode: string
-// 		}
-// 		createdAt: Date
-// 		lastLoginAt: Date
-// 	}
-//  paypal: {
-// 		email: string
-// 		nameOnCard: string
-// 		cardNumber: string
-// 		expirationDate: string
-// 		cvv: string
-// 	}
-// }
-
-// function populateUser(userinfo: users) {
-// 	const userObj: users = { ...userinfo }
-// }
+	phoneNumber: {
+		country: string
+		number: string
+	}
+	dateOfBirth: {
+		year: string
+		month: string
+		day: day
+	}
+	address: {
+		province: string
+		city: string
+		street: string
+		addressLine: string
+		zipCode: string
+	}
+	createdAt: Date
+	lastLoginAt: Date
+}
 
 export default function Setup() {
+	const [user, setUser] = useState<users | null>(null)
+	const [formData, setFormData] = useState({
+		suffix: "",
+		firstname: "",
+		lastname: "",
+		mname: "",
+		gender: "",
+		country: "",
+		number: "",
+		year: "",
+		month: "",
+		day: 0,
+		province: "",
+		city: "",
+		street: "",
+		addressLine: "",
+		zipCode: "",
+	})
 	const navigate = useNavigate()
 	const location = useLocation()
 	const userInfo = location.state
@@ -71,6 +80,40 @@ export default function Setup() {
 		}
 	}, [userInfo, navigate])
 
+	const handleClick = () => {
+		const use = userInfo.user
+		const newUser: users = {
+			uid: use.uid,
+			email: use.email,
+			password: use.password,
+			role: use.role,
+			name: {
+				suffix: formData.suffix,
+				firstname: formData.firstname,
+				middlename: formData.firstname,
+				lastname: formData.lastname,
+			},
+			gender: formData.gender,
+			phoneNumber: { country: formData.country, number: formData.number },
+			dateOfBirth: {
+				year: formData.year,
+				month: formData.month,
+				day: formData.day,
+			},
+			address: {
+				province: formData.province,
+				city: formData.city,
+				street: formData.street,
+				addressLine: formData.addressLine,
+				zipCode: formData.zipCode,
+			},
+			createdAt: new Date(),
+			lastLoginAt: new Date(),
+		}
+
+		setUser(newUser)
+		console.log("User object:", newUser)
+	}
 	const updateCardClasses = (index: number) => {
 		cardsRef.current.forEach((card, i) => {
 			card.classList.remove("active", "previous", "next")
@@ -85,11 +128,11 @@ export default function Setup() {
 	}, [currentIndex])
 
 	const handleNext = () => {
-		setCurrentIndex((prev) => Math.min(prev + 1, cardsRef.current.length - 1))
+		setCurrentIndex(currentIndex + 1)
 	}
 
 	const handlePrevious = () => {
-		setCurrentIndex((prev) => Math.max(prev - 1, 0))
+		setCurrentIndex(currentIndex - 1)
 	}
 
 	const handleAgree = () => {
@@ -113,6 +156,54 @@ export default function Setup() {
 			cards[0].classList.remove("hovered")
 		}
 	}
+	interface BirthDate {
+		day: string
+		month: string
+		year: string
+	}
+
+	interface Address {
+		country: string
+		province: string
+		city: string
+		street: string
+		address1: string
+		address2?: string
+		zip: string
+	}
+
+	const [birthDate, setBirthDate] = useState<BirthDate>({
+		day: "",
+		month: "",
+		year: "",
+	})
+
+	const [address, setAddress] = useState<Address>({
+		country: "",
+		province: "",
+		city: "",
+		street: "",
+		address1: "",
+		address2: "",
+		zip: "",
+	})
+
+	const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString())
+	const months = [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December",
+	]
+	const years = Array.from({ length: 100 }, (_, i) => (2025 - i).toString())
 
 	return (
 		<div className="container">
@@ -191,12 +282,22 @@ export default function Setup() {
 										type="text"
 										id="fname"
 										placeholder="input first name"
+										onChange={(e) =>
+											setFormData({ ...formData, firstname: e.target.value })
+										}
 									/>
 								</div>
 
 								<div className="suffix">
 									<label htmlFor="suffix">Suffix:</label>
-									<select id="suffix" name="suffix" required>
+									<select
+										id="suffix"
+										name="suffix"
+										onChange={(e) =>
+											setFormData({ ...formData, suffix: e.target.value })
+										}
+										required
+									>
 										<option value="" selected>
 											None
 										</option>
@@ -214,7 +315,14 @@ export default function Setup() {
 									<label htmlFor="lname" className="labelName">
 										Last Name
 									</label>
-									<input type="text" id="lname" placeholder="input last name" />
+									<input
+										type="text"
+										id="lname"
+										placeholder="input last name"
+										onChange={(e) =>
+											setFormData({ ...formData, lastname: e.target.value })
+										}
+									/>
 								</div>
 
 								<div className="mname">
@@ -225,6 +333,9 @@ export default function Setup() {
 										type="text"
 										id="mname"
 										placeholder="input middle name"
+										onChange={(e) =>
+											setFormData({ ...formData, mname: e.target.value })
+										}
 									/>
 								</div>
 							</div>
@@ -232,7 +343,16 @@ export default function Setup() {
 							<div className="gender">
 								<div className="male">
 									<label htmlFor="male">Male</label>
-									<input type="radio" id="male" name="gender" value="male" />
+									<input
+										type="radio"
+										id="male"
+										name="gender"
+										value="Male"
+										checked={formData.gender === "Male"}
+										onChange={(e) =>
+											setFormData({ ...formData, gender: e.target.value })
+										}
+									/>
 								</div>
 								<div className="female">
 									<label htmlFor="female">Female</label>
@@ -240,7 +360,11 @@ export default function Setup() {
 										type="radio"
 										id="female"
 										name="gender"
-										value="female"
+										value="Female"
+										checked={formData.gender === "Female"}
+										onChange={(e) =>
+											setFormData({ ...formData, gender: e.target.value })
+										}
 									/>
 								</div>
 								<div className="prefer">
@@ -249,16 +373,35 @@ export default function Setup() {
 										type="radio"
 										id="prefer"
 										name="gender"
-										value="prefer"
-										checked
+										value="Prefer"
+										checked={formData.gender === "Prefer"}
+										onChange={(e) =>
+											setFormData({ ...formData, gender: e.target.value })
+										}
 									/>
 								</div>
 							</div>
 
 							<div className="phoneNum">
 								<div className="countries">
-									<select id="country" name="country" required>
-										<option value="">-- Select Country --</option>
+									<select
+										id="country"
+										name="country"
+										onChange={(e) => {
+											console.log(
+												getCountry(e.target.value) + " " + e.target.value
+											)
+											setFormData({
+												...formData,
+												country:
+													getCountry(e.target.value) + " " + e.target.value,
+											})
+										}}
+										required
+									>
+										<option value="" selected>
+											-- Select Country --
+										</option>
 										<option value="+61">🇦🇺 Australia (+61)</option>
 										<option value="+880">🇧🇩 Bangladesh (+880)</option>
 										<option value="+55">🇧🇷 Brazil (+55)</option>
@@ -275,9 +418,7 @@ export default function Setup() {
 										<option value="+853">🇲🇴 Macau (+853)</option>
 										<option value="+64">🇳🇿 New Zealand (+64)</option>
 										<option value="+92">🇵🇰 Pakistan (+92)</option>
-										<option value="+63" selected>
-											🇵🇭 Philippines (+63)
-										</option>
+										<option value="+63">🇵🇭 Philippines (+63)</option>
 										<option value="+7">🇷🇺 Russia (+7)</option>
 										<option value="+65">🇸🇬 Singapore (+65)</option>
 										<option value="+27">🇿🇦 South Africa (+27)</option>
@@ -299,6 +440,7 @@ export default function Setup() {
 										pattern="\\d*"
 										placeholder="Enter phone number"
 										onChange={(e) => {
+											setFormData({ ...formData, number: e.target.value })
 											const input = e.target as HTMLInputElement
 											let v = input.value.replace(/\D/g, "")
 											if (v.startsWith("0")) v = v.slice(1)
@@ -439,6 +581,10 @@ export default function Setup() {
 										if (missingFields.length > 0) {
 											//as
 										} else {
+											setAddress((prev) => ({
+												...prev,
+												country: getCountry(country.value),
+											}))
 											handleNext()
 										}
 									}}
@@ -465,14 +611,246 @@ export default function Setup() {
 							<div className="steps">
 								<span>Steps: </span>
 							</div>
-							{/* Use StepCounter here */}
 							<StepCounter currentStep={2} />
 						</div>
 
-						{/* Example form content */}
 						<div className="form">
-							<p>Welcome to Step 3 — fill out your property details here.</p>
-							{/* Add your input fields or form section for step 3 below */}
+							<div className="form step-three">
+								<div className="birthdate">
+									<h3>Birth Date</h3>
+									<div className="birth-select">
+										<select
+											value={birthDate.day}
+											onChange={(e) => {
+												setFormData({
+													...formData,
+													day: Number(e.target.value),
+												})
+												setBirthDate({ ...birthDate, day: e.target.value })
+											}}
+										>
+											<option value="">Day</option>
+											{days.map((d) => (
+												<option key={d} value={d}>
+													{d}
+												</option>
+											))}
+										</select>
+
+										<select
+											value={birthDate.month}
+											onChange={(e) => {
+												setBirthDate({ ...birthDate, month: e.target.value })
+												setFormData({ ...formData, month: e.target.value })
+											}}
+										>
+											<option value="">Month</option>
+											{months.map((m) => (
+												<option key={m} value={m}>
+													{m}
+												</option>
+											))}
+										</select>
+
+										<select
+											value={birthDate.year}
+											onChange={(e) => {
+												setBirthDate({ ...birthDate, year: e.target.value })
+												setFormData({ ...formData, year: e.target.value })
+											}}
+										>
+											<option value="">Year</option>
+											{years.map((y) => (
+												<option key={y} value={y}>
+													{y}
+												</option>
+											))}
+										</select>
+									</div>
+								</div>
+								{/* ✅ Address Section */}
+								<h3>Address</h3>
+								<div className="address">
+									<input
+										type="text"
+										value={address.country}
+										readOnly
+										placeholder="Country"
+										onChange={(e) =>
+											setFormData({ ...formData, country: e.target.value })
+										}
+									/>
+									<input
+										type="text"
+										value={address.province}
+										onChange={(e) => {
+											setFormData({ ...formData, province: e.target.value })
+											setAddress({ ...address, province: e.target.value })
+										}}
+										placeholder="Province"
+									/>
+									<input
+										type="text"
+										value={address.city}
+										onChange={(e) => {
+											setFormData({ ...formData, city: e.target.value })
+											setAddress({ ...address, city: e.target.value })
+										}}
+										placeholder="City"
+									/>
+									<input
+										type="text"
+										value={address.street}
+										onChange={(e) => {
+											setFormData({ ...formData, street: e.target.value })
+											setAddress({ ...address, street: e.target.value })
+										}}
+										placeholder="Street"
+									/>
+									<input
+										type="text"
+										value={address.address1}
+										onChange={(e) => {
+											setFormData({ ...formData, addressLine: e.target.value })
+											setAddress({ ...address, address1: e.target.value })
+										}}
+										placeholder="Address Line 1"
+									/>
+
+									<input
+										type="text"
+										value={address.zip}
+										onChange={(e) => {
+											setFormData({ ...formData, zipCode: e.target.value })
+											setAddress({ ...address, zip: e.target.value })
+										}}
+										placeholder="ZIP Code"
+									/>
+								</div>
+								<div className="button">
+									<button className="prev" onClick={handlePrevious}>
+										Previous
+									</button>
+									<button
+										className="next"
+										onClick={() => {
+											const missingFields: string[] = []
+
+											// Validate birth date selects
+											const [daySel, monthSel, yearSel] = Array.from(
+												document.querySelectorAll<HTMLSelectElement>(
+													".birth-select select"
+												)
+											)
+											if (!birthDate.day) {
+												missingFields.push("Day")
+												if (daySel) daySel.style.border = "2px solid red"
+											} else if (daySel) {
+												daySel.style.border = ""
+											}
+
+											if (!birthDate.month) {
+												missingFields.push("Month")
+												if (monthSel) monthSel.style.border = "2px solid red"
+											} else if (monthSel) {
+												monthSel.style.border = ""
+											}
+
+											if (!birthDate.year) {
+												missingFields.push("Year")
+												if (yearSel) yearSel.style.border = "2px solid red"
+											} else if (yearSel) {
+												yearSel.style.border = ""
+											}
+
+											// Validate address inputs (order in JSX: country, province, city, street, address1, address2, zip)
+											const addrInputs = Array.from(
+												document.querySelectorAll<HTMLInputElement>(
+													".address input"
+												)
+											)
+											const [
+												provinceInput,
+												cityInput,
+												streetInput,
+												address1Input,
+												zipInput,
+											] = addrInputs
+
+											// Province
+											if (!address.province?.trim()) {
+												missingFields.push("Province")
+												if (provinceInput)
+													provinceInput.style.border = "2px solid red"
+											} else if (provinceInput) {
+												provinceInput.style.border = ""
+											}
+
+											// City
+											if (!address.city?.trim()) {
+												missingFields.push("City")
+												if (cityInput) cityInput.style.border = "2px solid red"
+											} else if (cityInput) {
+												cityInput.style.border = ""
+											}
+
+											// Street
+											if (!address.street?.trim()) {
+												missingFields.push("Street")
+												if (streetInput)
+													streetInput.style.border = "2px solid red"
+											} else if (streetInput) {
+												streetInput.style.border = ""
+											}
+
+											// Address Line 1
+											if (!address.address1?.trim()) {
+												missingFields.push("Address Line 1")
+												if (address1Input)
+													address1Input.style.border = "2px solid red"
+											} else if (address1Input) {
+												address1Input.style.border = ""
+											}
+
+											// ZIP
+											if (!address.zip?.trim()) {
+												missingFields.push("ZIP Code")
+												if (zipInput) zipInput.style.border = "2px solid red"
+											} else if (zipInput) {
+												zipInput.style.border = ""
+											}
+
+											// Add live clearing of red borders for the fields we validated
+											;[daySel, monthSel, yearSel].forEach((el) => {
+												if (!el) return
+												el.addEventListener("change", () => {
+													el.style.border = ""
+												})
+											})
+											;[
+												provinceInput,
+												cityInput,
+												streetInput,
+												address1Input,
+												zipInput,
+											].forEach((el) => {
+												if (!el) return
+												el.addEventListener("input", () => {
+													if (el.value.trim()) el.style.border = ""
+												})
+											})
+
+											if (missingFields.length > 0) {
+												return
+											}
+
+											handleNext()
+										}}
+									>
+										Next
+									</button>
+								</div>
+							</div>
 						</div>
 					</div>
 
@@ -482,15 +860,34 @@ export default function Setup() {
 						ref={(el) => {
 							if (el) cardsRef.current[3] = el
 						}}
-					></div>
+					>
+						<div className="logo">
+							<img src={logo} alt="logo" />
+							<span>NatureBnb</span>
+						</div>
 
-					{/* CARD FIVE */}
-					<div
-						className="card five"
-						ref={(el) => {
-							if (el) cardsRef.current[4] = el
-						}}
-					></div>
+						<div className="center">
+							<div className="box">
+								<div className="text">
+									<span>You're all set!!</span>
+								</div>
+								<div className="img">
+									<AnimatedCheck />
+								</div>
+								<div className="button">
+									<button
+										onClick={() => {
+											handleClick()
+											console.log(formData)
+											// navigate("/dashbaordHost")
+										}}
+									>
+										Continue to Dashboard
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			)}
 		</div>

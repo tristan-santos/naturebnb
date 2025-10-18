@@ -7,6 +7,7 @@ import Login from "./components/pages/Login"
 import Signup from "./components/pages/Signup"
 import Setup from "./components/pages/setup"
 import NotFound from "./components/pages/404"
+import DashboardHost from "./components/pages/dashboardHost"
 
 function App() {
 	return (
@@ -14,6 +15,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Landing />} />
 				<Route path="/BecomeHost" element={<BecomeHost />} />
+				<Route path="/dashboardHost" element={<DashboardHost />} />
 				<Route path="/setup" element={<Setup />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/signup" element={<Signup />} />
