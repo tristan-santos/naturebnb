@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type { ClipboardEvent } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import "../sass/becomeHost.scss"
@@ -10,7 +10,6 @@ import logo from "../../assets/logoNobgWhite.png"
 import StepCounter from "../../components/types/stepCounter"
 import getCountry from "../types/getCountry"
 import AnimatedCheck from "../types/animatedCheck"
-import type { UserInfo } from "firebase/auth"
 
 interface users {
 	uid: string
@@ -32,7 +31,7 @@ interface users {
 	dateOfBirth: {
 		year: string
 		month: string
-		day: day
+		day: number
 	}
 	address: {
 		province: string
@@ -64,6 +63,7 @@ export default function Setup() {
 		addressLine: "",
 		zipCode: "",
 	})
+	console.log("User setup" + user)
 	const navigate = useNavigate()
 	const location = useLocation()
 	const userInfo = location.state
@@ -581,10 +581,13 @@ export default function Setup() {
 										if (missingFields.length > 0) {
 											//as
 										} else {
-											setAddress((prev) => ({
-												...prev,
-												country: getCountry(country.value),
-											}))
+											if (country) {
+												setAddress((prev) => ({
+													...prev,
+													country: getCountry(country.value),
+												}))
+											}
+
 											handleNext()
 										}
 									}}
