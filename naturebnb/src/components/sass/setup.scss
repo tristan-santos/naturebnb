@@ -1,7 +1,63 @@
 @use "App";
 
-* {
-	font-family: App.$font;
+@mixin step {
+	.title {
+		background-color: #ffffffe9;
+		border: 3px solid App.$primary-clr;
+		margin-bottom: 40px;
+		border-radius: 1rem;
+		padding: 0rem 2.5rem;
+		color: App.$primary-clr;
+		font-weight: 600;
+		font-size: 1.2rem;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+		.step-counter {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 20px 0;
+
+			.step {
+				width: 35px;
+				height: 35px;
+				border-radius: 50%;
+				background-color: #ddd;
+				color: #333;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-weight: bold;
+				transition: 0.3s;
+			}
+
+			.step.active {
+				background-color: App.$primary-clr;
+				color: #fff;
+				transform: scale(1.1);
+			}
+
+			.line {
+				width: 50px;
+				height: 3px;
+				background-color: #ddd;
+				transition: 0.3s;
+			}
+
+			.step.active + .line {
+				background-color: App.$primary-clr;
+			}
+
+			.step-text {
+				text-align: center;
+				font-size: 1rem;
+				color: #555;
+			}
+		}
+	}
 }
 .container {
 	width: 100vw;
@@ -16,16 +72,103 @@
 		align-items: center;
 		justify-content: center;
 
+		.logo {
+			height: 15%;
+			padding-bottom: 0.5rem;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+			img {
+				z-index: -1;
+				width: 45px;
+				aspect-ratio: 1;
+				transform: rotate(45deg);
+			}
+			span {
+				font-size: 1.6rem;
+				font-weight: 750;
+				color: App.$primary-clr;
+				z-index: 1;
+			}
+		}
+
+		.button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 3rem;
+			margin-bottom: 1rem;
+
+			.agree {
+				background-color: App.$primary-clr;
+				padding: 0.9rem 2.5rem;
+				display: flex;
+				gap: 1rem;
+				border-radius: 8px;
+
+				color: white;
+				&:hover {
+					scale: 1.1;
+				}
+			}
+			.disagree {
+				border: 2px solid App.$error-clr;
+				padding: 0.9rem 2rem;
+				display: flex;
+				gap: 1rem;
+				border-radius: 8px;
+				background-color: #919c9566;
+
+				&:hover {
+					scale: 1.1;
+				}
+				color: App.$error-clr;
+			}
+			.next {
+				background-color: App.$primary-clr;
+				padding: 0.9rem 2.5rem;
+				display: flex;
+				color: white;
+				gap: 1rem;
+				border-radius: 8px;
+				&:hover {
+					scale: 1.1;
+				}
+			}
+			.prev {
+				border: 2px solid App.$primary-clr;
+				display: flex;
+				padding: 0.9rem 2rem;
+				gap: 1rem;
+				border-radius: 8px;
+				background-color: #919c9566;
+
+				&:hover {
+					scale: 1.1;
+				}
+				color: App.$primary-clr;
+			}
+			button {
+				font-size: 1.1rem;
+				font-weight: 700;
+				background-color: transparent;
+				outline: none;
+				border: none;
+			}
+		}
+
 		.card {
-			transition: all 0.5s ease-in-out;
+			transition: all 1s ease-in-out;
 			width: 650px;
-			height: 550px;
+			height: 600px;
 			border-radius: 1rem;
 			border: 3px solid #343434;
 			box-shadow: 2px 2px 4px #6a6a6a;
 			transition: all 0.3s ease-in-out;
 			display: none;
-			background-color: #39955b14;
+			background-color: white;
 			transform: translate(-200%, 0px);
 			&.hovered {
 				border: 3px solid App.$error-clr;
@@ -40,7 +183,7 @@
 			}
 			&.prev {
 				scale: 0.4;
-				transform: translate(-325%, 0px);
+				transform: translate(-100%, 0px);
 				position: absolute;
 				display: flex;
 				flex-direction: column;
@@ -91,60 +234,26 @@
 						scroll-behavior: smooth;
 					}
 				}
-				.button {
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					gap: 3rem;
-					margin-bottom: 1rem;
-
-					.agree {
-						background-color: App.$primary-clr;
-						padding: 0.9rem 2.5rem;
-						display: flex;
-						gap: 1rem;
-						border-radius: 8px;
-
-						button {
-							color: white;
-						}
-						&:hover {
-							scale: 1.1;
-						}
-					}
-					.disagree {
-						border: 2px solid App.$error-clr;
-						padding: 0.9rem 2rem;
-						display: flex;
-						gap: 1rem;
-						border-radius: 8px;
-						background-color: #919c9566;
-
-						&:hover {
-							scale: 1.1;
-						}
-						button {
-							color: App.$error-clr;
-						}
-					}
-					button {
-						font-size: 1.1rem;
-						font-weight: 700;
-						background-color: transparent;
-						outline: none;
-						border: none;
-					}
-				}
 			}
+
 			&.two {
+				@include step();
 				display: flex;
 				flex-direction: column;
-				gap: 1.5rem;
 				background-color: white;
+
+				.error {
+					display: none;
+					margin-bottom: 40px;
+					.error.has {
+						display: block;
+					}
+				}
 				.form {
+					margin-bottom: 40px;
 					display: flex;
 					flex-direction: column;
-					gap: 1rem;
+					gap: 1.7rem;
 
 					.name {
 						display: grid;
@@ -183,6 +292,15 @@
 									font-size: 0.9rem;
 									text-transform: capitalize;
 								}
+								&:-webkit-autofill {
+									-webkit-box-shadow: 0 0 0 1000px #e3f2fd inset;
+									-webkit-text-fill-color: #000;
+									transition: all 5000s ease-in-out 0s;
+								}
+
+								&:-webkit-autofill:focus {
+									-webkit-box-shadow: 0 0 0 1000px #bbdefb inset;
+								}
 							}
 						}
 						.suffix {
@@ -214,6 +332,103 @@
 									font-weight: 520;
 									font-size: 1.1rem;
 									border-radius: 1rem;
+								}
+							}
+						}
+					}
+					.gender {
+						display: flex;
+						flex-direction: row;
+						gap: 3rem;
+						align-items: center;
+						justify-content: center;
+
+						div {
+							display: flex;
+							flex-direction: row;
+							gap: 0.75rem;
+							align-items: center;
+							justify-content: center;
+
+							label {
+								font-size: 1.1rem;
+								font-weight: 500;
+							}
+
+							input {
+								width: 20px;
+								aspect-ratio: 1;
+								accent-color: App.$primary-clr;
+							}
+						}
+					}
+					.phoneNum {
+						display: flex;
+						flex-direction: row;
+						gap: 1.5rem;
+						align-items: center;
+						justify-content: flex-start;
+						padding: 0.5rem 2rem;
+
+						.countries {
+							display: flex;
+							flex-direction: row;
+							gap: 0.75rem;
+							align-items: center;
+							justify-content: center;
+
+							label {
+								font-size: 1.1rem;
+								font-weight: 500;
+							}
+
+							select {
+								border: 1.7px solid #474747;
+								padding: 1.1rem 0rem;
+								border-radius: 1rem;
+								font-size: 0.9rem;
+								font-weight: 500;
+								text-align: center;
+
+								option {
+									font-weight: 520;
+									font-size: 1.1rem;
+									border-radius: 1rem;
+								}
+								&:-webkit-autofill {
+									-webkit-box-shadow: 0 0 0 1000px #e3f2fd inset;
+									-webkit-text-fill-color: #000;
+									transition: all 5000s ease-in-out 0s;
+								}
+
+								&:-webkit-autofill:focus {
+									-webkit-box-shadow: 0 0 0 1000px #bbdefb inset;
+								}
+							}
+							input {
+								border-radius: 0.75rem;
+								border: 1.7px solid #474747;
+								width: 100%;
+								padding: 1.15rem 2rem;
+								font-size: 1.05rem;
+								font-weight: 520;
+								outline: none;
+								letter-spacing: 2px;
+
+								&::placeholder {
+									font-weight: normal;
+									font-size: 0.9rem;
+									text-transform: capitalize;
+									letter-spacing: 1px;
+								}
+								&:-webkit-autofill {
+									-webkit-box-shadow: 0 0 0 1000px #e3f2fd inset;
+									-webkit-text-fill-color: #000;
+									transition: all 5000s ease-in-out 0s;
+								}
+
+								&:-webkit-autofill:focus {
+									-webkit-box-shadow: 0 0 0 1000px #bbdefb inset;
 								}
 							}
 						}
