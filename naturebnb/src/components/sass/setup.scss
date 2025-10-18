@@ -1,5 +1,8 @@
 @use "App";
 
+* {
+	font-family: App.$font;
+}
 .container {
 	width: 100vw;
 	height: 100vh;
@@ -18,13 +21,15 @@
 			width: 650px;
 			height: 550px;
 			border-radius: 1rem;
-			border: 3px solid App.$primary-clr;
-			box-shadow: 2px 2px 4px App.$primary-clr;
-			transition: transform 0.3s, box-shadow 0.3s;
+			border: 3px solid #343434;
+			box-shadow: 2px 2px 4px #6a6a6a;
+			transition: all 0.3s ease-in-out;
 			display: none;
 			background-color: #39955b14;
 			transform: translate(-200%, 0px);
-
+			&.hovered {
+				border: 3px solid App.$error-clr;
+			}
 			&.next {
 				transform: translate(325%, 0px);
 				position: absolute;
@@ -108,7 +113,7 @@
 						}
 					}
 					.disagree {
-						border: 2px solid App.$primary-clr;
+						border: 2px solid App.$error-clr;
 						padding: 0.9rem 2rem;
 						display: flex;
 						gap: 1rem;
@@ -119,7 +124,7 @@
 							scale: 1.1;
 						}
 						button {
-							color: App.$primary-clr;
+							color: App.$error-clr;
 						}
 					}
 					button {
@@ -128,6 +133,90 @@
 						background-color: transparent;
 						outline: none;
 						border: none;
+					}
+				}
+			}
+			&.two {
+				display: flex;
+				flex-direction: column;
+				gap: 1.5rem;
+				background-color: white;
+				.form {
+					display: flex;
+					flex-direction: column;
+					gap: 1rem;
+
+					.name {
+						display: grid;
+						grid-template-columns: 1.5fr 1fr;
+						padding: 0 1.1rem;
+						grid-gap: 1rem;
+						max-width: 800px;
+						width: 100%;
+						gap: 1.75rem;
+						& > div {
+							position: relative;
+							width: 100%;
+							height: auto;
+							.labelName {
+								position: absolute;
+								top: -10px;
+								left: 20px;
+								font-size: 1rem;
+								font-weight: 525;
+								padding: 0.3rem 1rem;
+								color: #474747;
+								background-color: white;
+							}
+
+							input {
+								border-radius: 0.75rem;
+								border: 1.7px solid #474747;
+								width: 100%;
+								padding: 1.15rem 1.25rem;
+								font-size: 1.05rem;
+								font-weight: 550;
+								outline: none;
+
+								&::placeholder {
+									font-weight: normal;
+									font-size: 0.9rem;
+									text-transform: capitalize;
+								}
+							}
+						}
+						.suffix {
+							position: relative;
+							display: flex;
+							flex-direction: row;
+							align-items: center;
+							// justify-content: space-around;
+							gap: 1rem;
+
+							label {
+								position: absolute;
+								top: -10px;
+								left: 14px;
+								font-size: 1rem;
+								font-weight: 525;
+								padding: 0.3rem 1rem;
+								color: #474747;
+								background-color: white;
+							}
+							select {
+								border: 1.7px solid #474747;
+								padding: 1.1rem 3rem;
+								border-radius: 1rem;
+								font-size: 1.1rem;
+								font-weight: 520;
+
+								option {
+									font-weight: 520;
+									font-size: 1.1rem;
+									border-radius: 1rem;
+								}
+							}
+						}
 					}
 				}
 			}
